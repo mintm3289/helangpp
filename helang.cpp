@@ -167,6 +167,26 @@ int main() {
             if (a[0] == "print" && a.size() > 1) 
                 printvar(a[1]);
             if (a.size() > 2) {
+                if (a[0][a[0].length() - 1] == '[' ) {
+                    a[0].resize(a[0].size() - 1);
+                  u8 i = 1, v = 0;
+                  dvar content;
+                  while(true) {
+                      if (a[i][0] == '='){
+v = i;
+                          break;
+                      }
+                        for (char v : a[i]) {
+                            if (isdigit(v)) {
+                          content.push_back(std::stoi(a[i]));
+}
+}
+                      i++;
+                  }
+                
+                    indexvar(a[0], content, std::stoi(a[v + 1] ));
+                
+                }
                 if (a[1] == "=") {
                     if (a[2].c_str()[0] == '[') {
                         u8 cxk = midnum(a[2]);
