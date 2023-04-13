@@ -2,12 +2,19 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <ctype.h>
+#include <sstream>
+#include <cstring>
+#include <regex>
 #include <unordered_map>
 #define u8 short
 #define dstring std::string
 #define dvar std::vector<u8>
 #define darray std::vector<dvar>
 #define dmap std::unordered_map<std::string, u8>
+#define dtoken std::vector<std::string>
+
 darray var;
 dmap varname;
 
@@ -112,13 +119,78 @@ dvar getvar(dstring name) {
     return var[varname[name]];
 }
 
+std::vector<std::string> tokenize(std::istringstream& ss) {
+    std::vector<std::string> tokens;
+    std::string token;
+    while (ss >> token) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+template <typename T>
+void vector_pop_front(std::vector<T>& vec){
+    std::reverse(vec.begin(),vec.end()); // first becomes last, reverses the vector
+    vec.pop_back(); // pop last
+    std::reverse(vec.begin(),vec.end()); // reverses it again, so the elements are in the same order as before
+
+}
+
+inline u8 midnum(std::string& s) {
+    std::regex regex(R"(\d+)");   // matches a sequence of digits
+    u8 out;
+    std::smatch match;
+    while (std::regex_search(s, match, regex)) {
+        out = std::stoi(match.str());
+        s = match.suffix();
+    }
+    return out;
+}
+
+
 int main() {
     using namespace std;
     // Write C++ code here
    // std::cout << "Hello world!";
-    string input;
-   // cin >> input;
-    
+
+    dstring line;
+    while (std::getline(std::cin, line)) {
+        istringstream ss(line);
+        dtoken a = tokenize(ss);
+        
+        if (!a.empty()) {
+            if (a[0] == "u8" && a.size() > 1) {
+                createvar(a[1]);
+                vector_pop_front(a);
+            }
+            
+            if (a[0] == "print" && a.size() > 1) 
+                printvar(a[1]);
+            if (a.size() > 2) {
+                if (a[1] == "=") {
+                    if (a[2].c_str()[0] == '[') {
+                        u8 cxk = midnum(a[2]);
+                        initvar(a[0], cxk);
+                    } else {
+                
+                    dvar content;
+                    for (u8 i = 1; i < a.size(); i++) {
+                        for (char v : a[i]) {
+                            if (isdigit(v)) {
+                                content.push_back(std::stoi(a[i]));
+                                break;
+                            }
+                        }
+                    }
+                    assignvar(a[0], content);
+                    }
+                }
+                
+
+            }
+        }
+    }
+
     //todo: parse
     return 0;
 }
